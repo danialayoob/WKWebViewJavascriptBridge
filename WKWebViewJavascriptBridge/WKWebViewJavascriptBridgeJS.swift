@@ -20,8 +20,9 @@ let WKWebViewJavascriptBridgeJS = """
         }
     }
     window.WKWebViewJavascriptBridge = {
-        registerHandler: registerHandler,
-        callHandler: callHandler,
+        init: init,
+        registerHandlerForSwift: registerHandlerForSwift,
+        callSwiftHandler: callSwiftHandler,
         _fetchQueue: _fetchQueue,
         _handleMessageFromiOS: _handleMessageFromiOS
     };
@@ -32,11 +33,16 @@ let WKWebViewJavascriptBridgeJS = """
     var responseCallbacks = {};
     var uniqueId = 1;
 
-    function registerHandler(handlerName, handler) {
+    function init(defaultHandler) {
+        var responseCallback = function() { }
+        defaultHandler("WKWebViewJavascriptBridge init", responseCallback);
+    }
+
+    function registerHandlerForSwift(handlerName, handler) {
         messageHandlers[handlerName] = handler;
     }
 
-    function callHandler(handlerName, data, responseCallback) {
+    function callSwiftHandler(handlerName, data, responseCallback) {        
         if (arguments.length == 2 && typeof data == 'function') {
             responseCallback = data;
             data = null;
